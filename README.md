@@ -1,5 +1,3 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 ## Thaliak Translations
 
 This is an app which will allow its users to practice translation from one natural language to another, utilizing the official languages & translations for Final Fantasy XIV Online (FFXIV).
@@ -17,3 +15,7 @@ After clicking the provided button (currently labeled as "Show EN"), the user wi
 ### Warning
 
 I wish to caution everyone who may use this app that translation is NOT an exact science! The exact content of the official languages' text is often very different; the official text should be used as guidelines and learning tools. The user should not strive to predict what the official text says, but instead should create their own version based on what they are shown for source text.
+
+
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
