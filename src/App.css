@@ -5,11 +5,11 @@ body {
 }
 
 .Header {
-  background-color: rgba(0,0,0,.8);
+  background-color: rgba(24, 23, 31, 0.8);
   margin-top: 0px;
   position: absolute;
   top: 0px;
-  color: white;
+  color: rgba(255, 255, 255, 0.8);
   height: 110px;
   width: 100%;
   margin: 0px;
@@ -58,10 +58,11 @@ body {
 }
 
 .Button {
-  background-color: rgb(92, 0, 128);
-  border: 7px solid rgb(255, 38, 201);
-  color: white;
+  background-color: rgba(176,139,253, 0.6);
+  border: 7px solid rgba(129,63,139,1);
+  color: #662370;
   font-size: 1.5em;
+  font-weight: bold;
   width: 110px;
   height: 110px;
   margin: 5px;
