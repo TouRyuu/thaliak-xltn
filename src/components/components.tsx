@@ -9,11 +9,3 @@ export function Header () {
         </div>
     )
 }
-
-export function Button (props: any) {
-    return (
-        <button className="Button">
-            {props.text}
-        </button>
-    )
-}

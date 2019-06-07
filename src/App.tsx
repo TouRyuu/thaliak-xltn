@@ -1,29 +1,125 @@
-import React from 'react';
-import * as Component from './components/components'
+import React, { Component } from 'react';
+import * as Comp from './components/components'
 import './App.css';
 
-const App: React.FC = () => {
-  return (
-    <div>
-      <Component.Header />
-      <div className="ContentContainer">
-        <div className="OfficialText">
-          <span>Official Source Text goes here.</span>
-        </div>
+type AppState = {
+  lang: string,
+  isNew:Boolean,
+  userText:string
+}
 
-        <div className="UserInput">
-          <div className="UserText">
-            <span>User's Text goes here.</span>
+export default class Thaliak extends Component<AppState, AppState> {
+
+  constructor(props:AppState){
+    super(props)
+    this.state = { 
+      lang: this.props.lang,
+      isNew: this.props.isNew,
+      userText: this.props.userText
+    }
+  }
+
+  // this value will be flexible later
+  //var lang:string = "EN";
+  showLangLabel: string = `Show\n${this.props.lang}`;
+
+  tbDefault: string = "Type your translation here.";
+  sourceText: string = "Official Source Text goes here.";
+  targetText: string = "Official Target Text goes here.";
+
+  input: string = "";
+
+  componentDidMount(){
+    
+  }
+
+  showRes(){
+    this.setState({
+      isNew: false
+    });
+    this.targetText = "A wild Target Text appears!"
+  }
+
+  reset(){
+    this.setState({
+      isNew: true
+    });
+    // Fetch new quest text from XIVAPI
+    // FUTURE
+
+    // Clear text boxes
+    this.sourceText = "New Text";
+    this.setState({
+      userText: ""
+    })
+    this.targetText = "";
+  }
+
+  showNew(){
+    return (
+        <div className="ContentContainer">
+          <div className="OfficialText">
+            <span>{this.sourceText}</span>
           </div>
-          <Component.Button text="Show EN" />
+  
+          <form 
+            onSubmit={() => this.showRes} 
+            className="UserInput">
+            <textarea
+              className="UserText"
+              placeholder={this.tbDefault}
+              value={this.input}
+              onChange={() => this.setState({ userText: this.input })}>
+              {/* User's text goes here */}
+            </textarea>
+            <input 
+              type="submit" 
+              className="Button"
+              value={this.showLangLabel} />
+          </form>
+  
+          <div className="OfficialText">
+            {/* Leave this box empty */}
+          </div>
         </div>
+    );
+  }
 
-        <div className="OfficialText">
-          <span>Official Target Text goes here.</span>
+  showResult(){
+    return(
+    <div className="ContentContainer">
+      <div className="OfficialText">
+        <span>{this.sourceText}</span>
+      </div>
+
+      <div className="UserInput">
+        <div className="UserText">
+          <span>{this.state.userText}</span>
         </div>
+        <form onSubmit={() => this.reset}>
+          <input 
+            type="submit"  
+            className="Button"
+            value="Next" />
+        </form>
+      </div>
+
+      <div className="OfficialText">
+        <span>{this.targetText}</span>
       </div>
     </div>
   );
 }
 
-export default App;
+render(){
+return(
+  <div>
+    <Comp.Header />
+    {this.state.isNew ? this.showNew() : this.showResult()}
+  </div>
+);
+}
+
+}
+
+//export default Thaliak;
