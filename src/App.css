@@ -1,7 +1,12 @@
 body {
   background-image: url('./images/background.png');
+  background-attachment: fixed;
   background-color: #383c48;
   padding: 0px;
+  margin: 0px;
+}
+
+p {
   margin: 0px;
 }
 
@@ -14,6 +19,7 @@ body {
   height: 110px;
   width: 100%;
   margin: 0px;
+  padding-left: 20px;
 }
 
 .Subtext {

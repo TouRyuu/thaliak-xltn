@@ -1,137 +1,99 @@
-import React, { Component, ChangeEvent, SyntheticEvent } from 'react';
+import React from 'react';
 import * as Comp from './components/components'
 import './App.css';
-import { any } from 'prop-types';
+import Actions, { AppState } from './components/Actions'
 
-type AppState = {
-  lang: string,
-  isNew:Boolean,
-  userText:string
-}
-
-export default class Thaliak extends Component<AppState, AppState> {
+export default class Thaliak extends Actions {
 
   constructor(props:AppState){
     super(props)
-    this.state = { 
+    this.state = {
+      // App Language State
+      // This is in preparation for later expansion
       lang: this.props.lang,
-      isNew: this.props.isNew,
-      userText: this.props.userText
-    }
 
-    this.handleClick = this.handleClick.bind(this);
+      // Keep track of the app's overall state
+      // Is the page showing a new prompt?
+      isNew: this.props.isNew
+    }
+    
+    this.HandleChange = this.HandleChange.bind(this);
+    this.HandleClick = this.HandleClick.bind(this);
+    
   }
 
-  // this value will be flexible later
-  //var lang:string = "EN";
-  showLangLabel: string = `Show ${this.props.lang}`;
-
-  tbDefault: string = "Type your translation here.";
-  sourceText: string = "Official Source Text goes here.";
-  targetText: string = "Official Target Text goes here.";
-
-  input: string = "";
-
-  handleClick(){
-    this.setState(state => ({
-      isNew: !state.isNew
-    }));
+  componentDidMount(){
+    // Get initial data from XIVAPI & store it in this.state
+    this.setState({
+      sourceText: "Source Text belongs here.",
+      targetText: "A wild Target Text appears!"
+    })
+  }
+/*
+  handleClick(e:React.ChangeEvent<HTMLInputElement>){
+    e.preventDefault();
     if(this.state.isNew){
-      this.showRes();
+      this.setState({ isNew: false });
     } else {
-      this.reset();
+      this.getText();
+      this.setState({ isNew: true });
     }
   }
 
-  showRes(){
-    this.setState(Object.assign({}, this.state, {
-      isNew: false
-    }));
-    this.targetText = "A wild Target Text appears!"
-  }
-
-  reset(){
-    this.setState(Object.assign({}, this.state, {
-      isNew: true,
-      userText: ""
-    }));
-    // Fetch new quest text from XIVAPI
-    // FUTURE
-
-    // Put new text in source text box
-    this.sourceText = "New Text";
-    // Clear target text box
-    this.targetText = "";
-  }
-
-  showNew(){
-    return (
-        <div className="ContentContainer">
-          <div className="OfficialText">
-            <span>{this.sourceText}</span>
-          </div>
-  
-          <form 
-            onSubmit={this.handleClick} 
-            className="UserInput">
-            <textarea
-              className="UserText"
-              placeholder={this.tbDefault}
-              value={this.input}
-              onChange={() => this.setState({ userText: this.input })}>
-              {/* User's text goes here */}
-            </textarea>
-            <input 
-              type="submit" 
-              className="Button"
-              value={this.showLangLabel} />
-          </form>
-  
-          <div className="OfficialText">
-            {/* Leave this box empty */}
-          </div>
-        </div>
-    );
+  handleChange(e:React.ChangeEvent<HTMLInputElement>){
+    e.preventDefault();
+    this.setState({
+      userText: e.target.value
+    });
   }
 
   showResult(){
-    return(
-    <div className="ContentContainer">
-      <div className="OfficialText">
-        <span>{this.sourceText}</span>
-      </div>
-
-      <div className="UserInput">
-        <div className="UserText">
-          <span>{this.state.userText}</span>
-        </div>
-        <form onSubmit={this.handleClick}>
-          <input 
-            type="submit"  
-            className="Button"
-            value="Next" />
-        </form>
-      </div>
-
-      <div className="OfficialText">
-        <span>{this.targetText}</span>
-      </div>
-    </div>
-  );
-}
-
-render(){
-  if(!this.state.isNew){
-    console.log("State is not new.")
+    this.setState({
+      isNew: false
+    });
   }
-return(
-  <div>
-    <Comp.Header />
-    {this.state.isNew ? this.showNew() : this.showResult()}
-  </div>
-);
-}
+
+  getText(){
+    // Fetch new quest text from XIVAPI
+    // FUTURE
+
+    // Put new text in source & target states, and clear userText state
+    this.setState({
+      sourceText: "New Text",
+      targetText: "",
+      userText: ""
+    });
+  }
+*/
+  render(){
+    let userProps = {
+      isNew: this.state.isNew,
+      lang: this.state.lang,
+      handleClick: this.HandleClick,
+      handleChange: this.HandleChange,
+      input: this.state.input,
+      userText: this.state.userText,
+    }
+    return(
+      <div>
+        <Comp.Header />
+        <Comp.Container>
+          
+          <div className="OfficialText">
+            <p>{this.state.sourceText}</p>
+          </div>
+
+          <Comp.UserArea userProps={userProps} />
+
+          <div className="OfficialText">
+            {!this.state.isNew &&
+              <p>{this.state.targetText}</p>
+            }
+          </div>
+          
+        </Comp.Container>
+      </div>
+    );
+  }
 
 }
-
-//export default Thaliak;
