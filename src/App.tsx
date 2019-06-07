@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, ChangeEvent, SyntheticEvent } from 'react';
 import * as Comp from './components/components'
 import './App.css';
+import { any } from 'prop-types';
 
 type AppState = {
   lang: string,
@@ -17,11 +18,13 @@ export default class Thaliak extends Component<AppState, AppState> {
       isNew: this.props.isNew,
       userText: this.props.userText
     }
+
+    this.handleClick = this.handleClick.bind(this);
   }
 
   // this value will be flexible later
   //var lang:string = "EN";
-  showLangLabel: string = `Show\n${this.props.lang}`;
+  showLangLabel: string = `Show ${this.props.lang}`;
 
   tbDefault: string = "Type your translation here.";
   sourceText: string = "Official Source Text goes here.";
@@ -29,29 +32,35 @@ export default class Thaliak extends Component<AppState, AppState> {
 
   input: string = "";
 
-  componentDidMount(){
-    
+  handleClick(){
+    this.setState(state => ({
+      isNew: !state.isNew
+    }));
+    if(this.state.isNew){
+      this.showRes();
+    } else {
+      this.reset();
+    }
   }
 
   showRes(){
-    this.setState({
+    this.setState(Object.assign({}, this.state, {
       isNew: false
-    });
+    }));
     this.targetText = "A wild Target Text appears!"
   }
 
   reset(){
-    this.setState({
-      isNew: true
-    });
+    this.setState(Object.assign({}, this.state, {
+      isNew: true,
+      userText: ""
+    }));
     // Fetch new quest text from XIVAPI
     // FUTURE
 
-    // Clear text boxes
+    // Put new text in source text box
     this.sourceText = "New Text";
-    this.setState({
-      userText: ""
-    })
+    // Clear target text box
     this.targetText = "";
   }
 
@@ -63,7 +72,7 @@ export default class Thaliak extends Component<AppState, AppState> {
           </div>
   
           <form 
-            onSubmit={() => this.showRes} 
+            onSubmit={this.handleClick} 
             className="UserInput">
             <textarea
               className="UserText"
@@ -96,7 +105,7 @@ export default class Thaliak extends Component<AppState, AppState> {
         <div className="UserText">
           <span>{this.state.userText}</span>
         </div>
-        <form onSubmit={() => this.reset}>
+        <form onSubmit={this.handleClick}>
           <input 
             type="submit"  
             className="Button"
@@ -112,6 +121,9 @@ export default class Thaliak extends Component<AppState, AppState> {
 }
 
 render(){
+  if(!this.state.isNew){
+    console.log("State is not new.")
+  }
 return(
   <div>
     <Comp.Header />
