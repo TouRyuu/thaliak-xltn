@@ -27,11 +27,12 @@ export default abstract class Actions extends Component<AppState,AppState> {
   }*/
 
   GetText(text:any){
+    let temp = Math.floor(Math.random() * Math.floor(801));
     // Fetch new quest text from XIVAPI
     // FUTURE
 
     // Put new text in source & target states, and clear userText state
-    text.source = "New Text";
+    text.source = `New Source Text - #${temp}`;
     text.target = "A wild Target Text appears!";
 
   }

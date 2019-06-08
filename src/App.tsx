@@ -29,10 +29,7 @@ export default class Thaliak extends Actions {
 
   componentDidMount(){
     // Get initial data from XIVAPI & store it in this.
-    this.text = {
-      source: "Source text.",
-      target: "Target text."
-    }
+    this.GetText(this.text);
   }
 
   render(){
