@@ -10,6 +10,13 @@ p {
   margin: 0px;
 }
 
+textarea {
+  resize: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
 .Header {
   background-color: rgba(24, 23, 31, 0.8);
   margin-top: 0px;
@@ -61,6 +68,7 @@ p {
   height: 100px;
   width: 610px;
   position: absolute;
+  border: 0px;
   top: 0px;
 }
 
