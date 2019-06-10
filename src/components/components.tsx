@@ -13,7 +13,9 @@ export function Header () {
 export function Container (props:any) {
     return (
         <div className="ContentContainer">
+
             {props.children}
+
         </div>
     )
 }

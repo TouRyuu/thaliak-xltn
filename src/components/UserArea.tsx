@@ -25,7 +25,7 @@ export default class UserArea extends Component<any, any> {
     render(){
     const pState = this.props.pState;
     let input = this.state.input;
-    let label = pState.isNew ? `Show ${pState.lang}` : "Next";
+    let label = pState.isNew ? `Show ${pState.tLang}` : "Next";
     
     return(
         <div className="UserInput">
