@@ -2,7 +2,8 @@ import React from 'react';
 import * as Comp from './components/components'
 import UserArea from './components/UserArea'
 import './App.css';
-import Actions, { AppState } from './components/Actions'
+import Actions from './components/Actions'
+import { AppState } from './lib/types'
 
 export default class Thaliak extends Actions {
 

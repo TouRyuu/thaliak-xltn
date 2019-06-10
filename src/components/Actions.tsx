@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
-
-export type AppState = {
-    lang:string,/*{
-      source:string,
-      target:string
-    } */
-    isNew:Boolean
-  }
+import { AppState } from '../lib/types'
+import { GetQuests } from '../lib/api'
 
 export default abstract class Actions extends Component<AppState,AppState> {
   
@@ -29,7 +23,7 @@ export default abstract class Actions extends Component<AppState,AppState> {
   GetText(text:any){
     let temp = Math.floor(Math.random() * Math.floor(801));
     // Fetch new quest text from XIVAPI
-    // FUTURE
+    GetQuests();
 
     // Put new text in source & target states, and clear userText state
     text.source = `New Source Text - #${temp}`;
