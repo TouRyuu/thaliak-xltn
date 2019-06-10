@@ -2,6 +2,8 @@
 
 This is an app which will allow its users to practice translation from one natural language to another, utilizing the official languages & translations for Final Fantasy XIV Online (FFXIV).
 
+You can [access it here](https://thaliak.herokuapp.com/)!
+
 ### Planned Features: V1.0
 
 For the initial version of this app, I have utilized the original Japanese text and the English translation of FFXIV to allow a user to practice translating from Japanese to English.
