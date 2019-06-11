@@ -55,6 +55,7 @@ select {
   height: 100px;
   width: auto;
   position: relative;
+  overflow:auto;
 }
 
 .UserInput {
@@ -64,6 +65,7 @@ select {
   height: 120px;
   background-color: none;
   position: relative;
+  overflow:auto;
 }
 
 .UserText {
@@ -75,6 +77,7 @@ select {
   position: absolute;
   border: 0px;
   top: 0px;
+  overflow:auto;
 }
 
 .Button {
