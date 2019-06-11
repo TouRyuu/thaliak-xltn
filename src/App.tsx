@@ -3,23 +3,19 @@ import * as Comp from './components/components'
 import UserArea from './components/UserArea'
 import './App.css';
 import Actions from './lib/Actions'
-import { AppState } from './lib/types'
+import { AppState, Languages } from './lib/types'
 
 export default class Thaliak extends Actions {
   constructor(props:AppState){
     super(props)
     this.state = {
-      // App Language State
-      // This is in preparation for later expansion
-      sLang: this.props.sLang, // source language
-      tLang: this.props.tLang, // target language
-
       // Keep track of the app's overall state
       // Is the page showing a new prompt?
       isNew: this.props.isNew,
+      haveText: false,
       pages: -1,
-
-      haveText: false
+      from: this.props.from,
+      to: this.props.to
     }
     
     this.HandleClick = this.HandleClick.bind(this);
@@ -29,9 +25,6 @@ export default class Thaliak extends Actions {
     this.Init();
   }
 
-  /*
-  */
-
   render(){
     if(this.state.pages !== undefined){
       if((this.state.pages > 0) && 
@@ -39,6 +32,10 @@ export default class Thaliak extends Actions {
           !this.state.haveText){
         this.GetText();
       }
+    }
+    let text:Languages = {JP:"",EN:""};
+    if(this.state.text !== undefined){
+      text = this.state.text;
     }
 
     return(
@@ -62,7 +59,7 @@ export default class Thaliak extends Actions {
           
           <div className="OfficialText">
             {this.state.haveText &&
-              <p>{this.state.source}</p>
+              <p>{text.JP}</p>
             }
           </div>
 
@@ -70,7 +67,7 @@ export default class Thaliak extends Actions {
 
           <div className="OfficialText">
             {!this.state.isNew &&
-              <p>{this.state.target}</p>
+              <p>{text.EN}</p>
             }
           </div>
           

@@ -1,9 +1,15 @@
 export type AppState = {
-    sLang:string,
-    tLang:string,
-    isNew:Boolean,
-    haveText?:Boolean,
-    pages?:number,
-    source?:string,
-    target?:string
-  }
+  isNew:Boolean,
+  haveText?:Boolean,
+  pages?:number,
+  from:string,
+  to:string,
+  text?:Languages
+}
+
+export type Languages = {
+  EN:string,
+  JP:string,
+  FR?:string,
+  DE?:string
+}

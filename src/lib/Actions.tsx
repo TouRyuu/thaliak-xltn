@@ -18,23 +18,23 @@ export default abstract class Actions extends Component<AppState,AppState> {
     }
   }
 
-  ChangeLang(e:React.FormEvent<HTMLSelectElement>,direction:string){
+  ChangeLang(e:React.ChangeEvent<HTMLSelectElement>,direction:string){
     e.preventDefault();
     console.log("Change Language");
-    console.log("Change value: ",e.currentTarget.value)
-    let change = e.currentTarget.value;
+    let change = e.target.value;
 
     if(direction === "to"){
       this.setState({
-        tLang: change
+        to: change
       });
       console.log("To ",change)
     } else if (direction === "from"){
       this.setState({
-        sLang: change
+        from: change
       });
       console.log("From ",change)
     } else {
+      // This should never fire since I have it hardcoded.
       console.error("Error: Language direction not found.")
     }
   }
@@ -82,37 +82,26 @@ export default abstract class Actions extends Component<AppState,AppState> {
 
       // use the item ID to get details about that Quest
       xiv.data.get("Quest",item).then((response:any) => {
-        let source:any;
-        let target:any;
-        // set source
-        switch (this.state.sLang){
-          case "EN":
-            source = response.TextData_en.Dialogue;
-            break;
-          case "JP":
-            source = response.TextData_ja.Dialogue;
-            break;
-          default:
-            console.error("Error setting source language: language not found");
-        }
-        switch (this.state.tLang){
-          case "EN":
-            target = response.TextData_en.Dialogue;
-            break;
-          case "JP":
-            target = response.TextData_ja.Dialogue;
-            break;
-          default:
-            console.error("Error setting target language: language not found");
-        }
-
         // get a random DIALOGUE number
-        dialogueID = this.RNG(source.length);
+        dialogueID = this.RNG((response.TextData_en).length);
+
+        console.log("TEST: ", response.TextData_en.Dialogue[dialogueID].Text)
+
+        let temp = {
+          //DE: response.TextData_de.Dialogue[dialogueID],
+          EN: response.TextData_en.Dialogue[dialogueID],
+          //FR: response.TextData_fr.Dialogue[dialogueID],
+          JP: response.TextData_ja.Dialogue[dialogueID]
+        }
         
         // assign strings from the dialog number to state
         this.setState({
-          source: source[dialogueID].Text,
-          target: target[dialogueID].Text,
+          text: {
+            //DE: temp.DE.Dialogue[dialogueID].Text,
+            EN: temp.EN.Text,
+            //FR: temp.FR.Dialogue[dialogueID].Text,
+            JP: temp.JP.Text
+          },
           haveText: true
         });
         
