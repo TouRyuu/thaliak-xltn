@@ -7,15 +7,36 @@ const xiv = new XIVAPI();
 export default abstract class Actions extends Component<AppState,AppState> {
 
   HandleClick(e:React.FormEvent<HTMLFormElement>){
-      e.preventDefault();
-      if(this.state.isNew){
-        // button click while NEW changes state to NOT NEW
-        this.setState({ isNew: false });
-      } else {
-        // button click while NOT NEW changes state to new
-        // also change haveText to false to allow retrieving new text
-        this.setState({ isNew: true, haveText: false });
-      }
+    e.preventDefault();
+    if(this.state.isNew){
+      // button click while NEW changes state to NOT NEW
+      this.setState({ isNew: false });
+    } else {
+      // button click while NOT NEW changes state to new
+      // also change haveText to false to allow retrieving new text
+      this.setState({ isNew: true, haveText: false });
+    }
+  }
+
+  ChangeLang(e:React.FormEvent<HTMLSelectElement>,direction:string){
+    e.preventDefault();
+    console.log("Change Language");
+    console.log("Change value: ",e.currentTarget.value)
+    let change = e.currentTarget.value;
+
+    if(direction === "to"){
+      this.setState({
+        tLang: change
+      });
+      console.log("To ",change)
+    } else if (direction === "from"){
+      this.setState({
+        sLang: change
+      });
+      console.log("From ",change)
+    } else {
+      console.error("Error: Language direction not found.")
+    }
   }
 
   Init() {
@@ -61,17 +82,37 @@ export default abstract class Actions extends Component<AppState,AppState> {
 
       // use the item ID to get details about that Quest
       xiv.data.get("Quest",item).then((response:any) => {
-        let temp_en = response.TextData_en.Dialogue;
-        let temp_jp = response.TextData_ja.Dialogue;
-        let numDialogue = temp_en.length;
+        let source:any;
+        let target:any;
+        // set source
+        switch (this.state.sLang){
+          case "EN":
+            source = response.TextData_en.Dialogue;
+            break;
+          case "JP":
+            source = response.TextData_ja.Dialogue;
+            break;
+          default:
+            console.error("Error setting source language: language not found");
+        }
+        switch (this.state.tLang){
+          case "EN":
+            target = response.TextData_en.Dialogue;
+            break;
+          case "JP":
+            target = response.TextData_ja.Dialogue;
+            break;
+          default:
+            console.error("Error setting target language: language not found");
+        }
 
         // get a random DIALOGUE number
-        dialogueID = this.RNG(numDialogue);
+        dialogueID = this.RNG(source.length);
         
         // assign strings from the dialog number to state
         this.setState({
-          source: temp_jp[dialogueID].Text,
-          target: temp_en[dialogueID].Text,
+          source: source[dialogueID].Text,
+          target: target[dialogueID].Text,
           haveText: true
         });
         

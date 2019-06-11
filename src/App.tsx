@@ -11,8 +11,8 @@ export default class Thaliak extends Actions {
     this.state = {
       // App Language State
       // This is in preparation for later expansion
-      sLang: this.props.sLang,
-      tLang: this.props.tLang,
+      sLang: this.props.sLang, // source language
+      tLang: this.props.tLang, // target language
 
       // Keep track of the app's overall state
       // Is the page showing a new prompt?
@@ -29,6 +29,9 @@ export default class Thaliak extends Actions {
     this.Init();
   }
 
+  /*
+  */
+
   render(){
     if(this.state.pages !== undefined){
       if((this.state.pages > 0) && 
@@ -41,7 +44,21 @@ export default class Thaliak extends Actions {
     return(
       <div>
         <Comp.Header />
+
         <Comp.Container>
+
+        <label>Translate from:
+          <select onChange={(e) => this.ChangeLang(e,"from")}>
+            <option value="EN">English</option>
+            <option value="JP">Japanese</option>
+          </select>
+        </label>
+        <label>to:
+          <select onChange={(e) => this.ChangeLang(e,"to")}>
+              <option value="JP">Japanese</option>
+              <option value="EN">English</option>
+          </select>
+        </label>
           
           <div className="OfficialText">
             {this.state.haveText &&

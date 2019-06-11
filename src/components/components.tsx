@@ -1,7 +1,7 @@
 import '../App.css'
 import React from 'react'
 
-export function Header () {
+export function Header (props:any) {
     return (
         <div className="Header">
             <h1>Thaliak's Translations</h1>
