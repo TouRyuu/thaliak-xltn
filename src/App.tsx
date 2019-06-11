@@ -63,7 +63,7 @@ export default class Thaliak extends Actions {
         <Comp.Container>
 
         <label>Translate
-          <select value="JP" onChange={(e) => this.ChangeLang(e,"from")}>
+          <select value={this.state.from} onChange={(e) => this.ChangeLang(e,"from")}>
             <option value="DE">deutsche</option>
             <option value="EN">English</option>
             <option value="FR">Française</option>
@@ -71,7 +71,7 @@ export default class Thaliak extends Actions {
           </select>
         </label>
         <label>->
-          <select value="EN" onChange={(e) => this.ChangeLang(e,"to")}>
+          <select value={this.state.to} onChange={(e) => this.ChangeLang(e,"to")}>
             <option value="DE">deutsche</option>
             <option value="JP">日本語</option>
             <option value="FR">Française</option>
