@@ -80,6 +80,9 @@ export default class Thaliak extends Actions {
         </label>
           
           <div className="OfficialText">
+            {this.state.isNew && !this.state.haveText &&
+              <p>Loading...</p>
+            }
             {this.state.haveText &&
               <p>{source}</p>
             }

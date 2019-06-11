@@ -158,7 +158,6 @@ export default abstract class Actions extends Component<AppState,AppState> {
 
     // get number of times PP4 is used
     let num = (fix.split(/<If\(PlayerParameter\(4\)\)>/g).length -1);
-    console.log(`Fixing gendered language display ${num} times... `);
     
     // cycle through the string that many times
     for(let i = 0; i < num; i++){
