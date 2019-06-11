@@ -137,6 +137,7 @@ export default abstract class Actions extends Component<AppState,AppState> {
   }
 
   ReplaceCode(toChange:string):string{
+    // basic replacements
     toChange = toChange.replace(/<SoftHyphen\/>/g, "-");
     toChange = toChange.replace(/<Indent\/>/g, "");
     if(/Emphasis/.test(toChange)){
@@ -145,9 +146,30 @@ export default abstract class Actions extends Component<AppState,AppState> {
       toChange = toChange.replace(/<Emphasis>/g, "");
       toChange = toChange.replace(/<\/Emphasis>/g, "");
     }
+
+    // Fix display of gendered text
     if(/PlayerParameter\(4\)/.test(toChange)){
       toChange = this.Gender(toChange);
     }
+
+    // Fix display of things that reference other sheets
+    if(/Item/.test(toChange)){
+      toChange = toChange.replace(/<.{6,14}Item.{10,18}\/>/g,"[[item]]");
+    }
+    if(/EObj/.test(toChange)){
+      toChange = toChange.replace(/<.{6,9}EObj.{10,18}\/>/g,"[[Event Object]]");
+    }
+    if(/BNpcName/.test(toChange)){
+      toChange = toChange.replace(/<.{6,9}BNpcName.{10,18}\/>/g, "[[monster]]");
+    }
+
+    // Fix display of PlayerParameter(68), which references current job
+    if(/PlayerParameter\(68\)/.test(toChange)){
+      // this handles any locations of self-closing tags
+      toChange = toChange.replace(/<.{9,16}PlayerParameter\(68\).{0,8}>/g,"[[class/job]]")
+    }
+
+    // send the new text back
     let changed = toChange;
     return changed;
   }
@@ -161,12 +183,20 @@ export default abstract class Actions extends Component<AppState,AppState> {
     
     // cycle through the string that many times
     for(let i = 0; i < num; i++){
-      fix = fix.replace(/<If\(PlayerParameter\(4\)\)>.*<Else\/>.*<\/If>/, (x)=>{
-        x = x.replace(/<If\(PlayerParameter\(4\)\)>/, "(");
-        x = x.replace(/<Else\/>/, "/");
-        x = x.replace(/<\/If>/, ")");
-        return x;
-      });
+      if(/<Else\/><\/If>/.test(fix)){
+        fix = fix.replace(/<If\(PlayerParameter\(4\)\)>.*<Else\/><\/If>/, (x)=>{
+          x = x.replace(/<If\(PlayerParameter\(4\)\)>/, "(");
+          x = x.replace(/<Else\/><\/If>/, ")");
+          return x;
+        });
+      } else {
+        fix = fix.replace(/<If\(PlayerParameter\(4\)\)>.*<Else\/>.*<\/If>/, (x)=>{
+          x = x.replace(/<If\(PlayerParameter\(4\)\)>/, "(");
+          x = x.replace(/<Else\/>/, "/");
+          x = x.replace(/<\/If>/, ")");
+          return x;
+        });
+      }
     }
 
     return fix;
