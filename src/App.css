@@ -17,6 +17,11 @@ textarea {
     sans-serif;
 }
 
+select {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 .Header {
   background-color: rgba(24, 23, 31, 0.8);
   margin-top: 0px;
