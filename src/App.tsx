@@ -9,8 +9,6 @@ export default class Thaliak extends Actions {
   constructor(props:AppState){
     super(props)
     this.state = {
-      // Keep track of the app's overall state
-      // Is the page showing a new prompt?
       isNew: this.props.isNew,
       haveText: false,
       pages: -1,
@@ -33,9 +31,29 @@ export default class Thaliak extends Actions {
         this.GetText();
       }
     }
-    let text:Languages = {JP:"",EN:""};
+    let text:Languages = { DE: "", EN: "", FR: "", JP: ""};
+    let source:string = "";
+    let target:string = "";
     if(this.state.text !== undefined){
       text = this.state.text;
+    }
+    if(this.state.to === "EN"){
+      target = text["EN"];
+    } else if(this.state.to === "JP"){
+      target = text["JP"];
+    } else if(this.state.to === "FR"){
+      target = text["FR"];
+    } else if(this.state.to === "DE"){
+      target = text["DE"];
+    }
+    if(this.state.from === "EN"){
+      source = text["EN"];
+    } else if(this.state.from === "JP") {
+      source = text["JP"];
+    } else if(this.state.from === "FR") {
+      source = text["FR"];
+    } else if(this.state.from === "DE") {
+      source = text["DE"];
     }
 
     return(
@@ -45,21 +63,25 @@ export default class Thaliak extends Actions {
         <Comp.Container>
 
         <label>Translate from:
-          <select onChange={(e) => this.ChangeLang(e,"from")}>
+          <select value="JP" onChange={(e) => this.ChangeLang(e,"from")}>
+            <option value="DE">deutsche</option>
             <option value="EN">English</option>
-            <option value="JP">Japanese</option>
+            <option value="FR">Française</option>
+            <option value="JP">日本語</option>
           </select>
         </label>
         <label>to:
-          <select onChange={(e) => this.ChangeLang(e,"to")}>
-              <option value="JP">Japanese</option>
-              <option value="EN">English</option>
+          <select value="EN" onChange={(e) => this.ChangeLang(e,"to")}>
+            <option value="DE">deutsche</option>
+            <option value="JP">日本語</option>
+            <option value="FR">Française</option>
+            <option value="EN">English</option>
           </select>
         </label>
           
           <div className="OfficialText">
             {this.state.haveText &&
-              <p>{text.JP}</p>
+              <p>{source}</p>
             }
           </div>
 
@@ -67,7 +89,7 @@ export default class Thaliak extends Actions {
 
           <div className="OfficialText">
             {!this.state.isNew &&
-              <p>{text.EN}</p>
+              <p>{target}</p>
             }
           </div>
           

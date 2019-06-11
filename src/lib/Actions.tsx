@@ -20,19 +20,16 @@ export default abstract class Actions extends Component<AppState,AppState> {
 
   ChangeLang(e:React.ChangeEvent<HTMLSelectElement>,direction:string){
     e.preventDefault();
-    console.log("Change Language");
     let change = e.target.value;
 
     if(direction === "to"){
       this.setState({
         to: change
       });
-      console.log("To ",change)
     } else if (direction === "from"){
       this.setState({
         from: change
       });
-      console.log("From ",change)
     } else {
       // This should never fire since I have it hardcoded.
       console.error("Error: Language direction not found.")
@@ -82,25 +79,20 @@ export default abstract class Actions extends Component<AppState,AppState> {
 
       // use the item ID to get details about that Quest
       xiv.data.get("Quest",item).then((response:any) => {
+        let tempEN = response.TextData_en.Dialogue;
+        let tempJP = response.TextData_ja.Dialogue;
+        
         // get a random DIALOGUE number
-        dialogueID = this.RNG((response.TextData_en).length);
-
-        console.log("TEST: ", response.TextData_en.Dialogue[dialogueID].Text)
-
-        let temp = {
-          //DE: response.TextData_de.Dialogue[dialogueID],
-          EN: response.TextData_en.Dialogue[dialogueID],
-          //FR: response.TextData_fr.Dialogue[dialogueID],
-          JP: response.TextData_ja.Dialogue[dialogueID]
-        }
+        let numDialogue = tempEN.length;
+        dialogueID = this.RNG(numDialogue);
         
         // assign strings from the dialog number to state
         this.setState({
           text: {
-            //DE: temp.DE.Dialogue[dialogueID].Text,
-            EN: temp.EN.Text,
-            //FR: temp.FR.Dialogue[dialogueID].Text,
-            JP: temp.JP.Text
+            DE: response.TextData_de.Dialogue[dialogueID].Text,
+            EN: tempEN[dialogueID].Text,
+            FR: response.TextData_fr.Dialogue[dialogueID].Text,
+            JP: tempJP[dialogueID].Text
           },
           haveText: true
         });
@@ -116,6 +108,7 @@ export default abstract class Actions extends Component<AppState,AppState> {
   }
 
   RNG(req:number):number{
-    return Math.floor(Math.random() * Math.floor(req));
+    let res = Math.floor(Math.random() * Math.floor(req));
+    return res;
   }
 }

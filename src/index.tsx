@@ -4,7 +4,7 @@ import './index.css';
 import Thaliak from './App';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<Thaliak isNew={true} from="EN" to="JP" />, document.getElementById('root'));
+ReactDOM.render(<Thaliak isNew={true} from="JP" to="EN" />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
