@@ -151,22 +151,23 @@ export default abstract class Actions extends Component<AppState,AppState> {
     if(/PlayerParameter\(4\)/.test(toChange)){
       toChange = this.Gender(toChange);
     }
-
+    
     // change character name to placeholder
-    let cName = /<Split\(<Highlight>ObjectParameter\(.?\)<\/Highlight>.{2,4}\)\/>/;
+    let cName = /<Highlight>ObjectParameter\(1\)<\/Highlight>/g;
+    //let cName = /<Split\(<Highlight>ObjectParameter\(.?\)<\/Highlight>.{2,6}\)\/>/g;
     if(cName.test(toChange)){
       toChange = toChange.replace(cName, "[[character name]]");
     }
 
     // Fix display of things that reference other sheets
     if(/Item/.test(toChange)){
-      toChange = toChange.replace(/<.{6,14}Item.{10,18}\/>/g,"[[item]]");
+      toChange = toChange.replace(/<.{6,14}Item.{6,18}\/>/g,"[[item]]");
     }
     if(/EObj/.test(toChange)){
-      toChange = toChange.replace(/<.{6,9}EObj.{10,18}\/>/g,"[[Event Object]]");
+      toChange = toChange.replace(/<.{6,9}EObj.{6,18}\/>/g,"[[Event Object]]");
     }
     if(/BNpcName/.test(toChange)){
-      toChange = toChange.replace(/<.{6,9}BNpcName.{10,18}\/>/g, "[[monster]]");
+      toChange = toChange.replace(/<.{6,9}BNpcName.{6,18}\/>/g, "[[monster]]");
     }
 
     // Fix display of PlayerParameter(68), which references current job
@@ -174,6 +175,14 @@ export default abstract class Actions extends Component<AppState,AppState> {
       // this handles any locations of self-closing tags
       toChange = toChange.replace(/<.{9,16}PlayerParameter\(68\).{0,8}>/g,"[[class/job]]")
     }
+
+    // remove wrappers such as Clickable and Split
+    toChange = toChange.replace(/<Split\(/g, "");
+    toChange = toChange.replace(/<Clickable\(/g, "");
+
+    // remove stray tag closers
+    // This should be uncommented once I'm happy with everything else
+    toChange = toChange.replace(/\/>/g, "")
 
     // send the new text back
     let changed = toChange;
@@ -183,18 +192,31 @@ export default abstract class Actions extends Component<AppState,AppState> {
   // This function handles gendered text,
   // as designated in the text by PlayerParameter(4)
   Gender(fix:string):string {
-
     // get number of times PP4 is used
     let num = (fix.split(/<If\(PlayerParameter\(4\)\)>/g).length -1);
     
+    // These regex may need adjustments to be more specific about
+    // how many characters to go between tags. There are some 
+    // situations where it combines the first and last occurance into
+    // the same fix - but not always.
+
     // cycle through the string that many times
     for(let i = 0; i < num; i++){
+      // sections with only FEMININE option
       if(/<Else\/><\/If>/.test(fix)){
         fix = fix.replace(/<If\(PlayerParameter\(4\)\)>.*<Else\/><\/If>/, (x)=>{
           x = x.replace(/<If\(PlayerParameter\(4\)\)>/, "(");
           x = x.replace(/<Else\/><\/If>/, ")");
           return x;
         });
+      // sections with only MASCULINE option
+      } else if(/<If\(PlayerParameter\(4\)\)><Else\/>.*<\/If>/.test(fix)){
+        fix = fix.replace(/<If\(PlayerParameter\(4\)\)><Else\/>.*<\/If>/, (x)=>{
+          x = x.replace(/<If\(PlayerParameter\(4\)\)><Else\/>/, "(");
+          x = x.replace(/<\/If>/, ")");
+          return x;
+        });
+      // sections with both FEMININE and MASCULINE options
       } else {
         fix = fix.replace(/<If\(PlayerParameter\(4\)\)>.*<Else\/>.*<\/If>/, (x)=>{
           x = x.replace(/<If\(PlayerParameter\(4\)\)>/, "(");
@@ -208,3 +230,40 @@ export default abstract class Actions extends Component<AppState,AppState> {
     return fix;
   }
 }
+
+/*
+Si l'aventuri(ère<Else/>er</If> est aussi gentil(le) qu'(elle/il) en a l'air, (elle/il) ira botter les fesses de ces fichus engins! <If(PlayerParameter(4))>Elle/Il) n'a qu'à en casser trois près de L'Arkhitékton, ça embêtera bien la Main indigo!
+
+Si l'aventuri(ère<Else/>er</If> 
+  est aussi gentil(le) qu'(elle/il) en a l'air, (elle/il) ira botter
+  les fesses de ces fichus engins! <If(PlayerParameter(4))>Elle/Il) 
+  n'a qu'à en casser trois près de L'Arkhitékton, ça embêtera bien 
+  la Main indigo!
+
+Des Roegadyns comme <If(Equal(PlayerParameter(71),5))>vous et moi<Else/>moi</If> auront utilisé cette pioche.
+
+A pleasant <If(LessThan(PlayerParameter(11),12))><If(LessThan(PlayerParameter(11),4))>evening<Else/>morning</If><Else/><If(LessThan(PlayerParameter(11),17))>afternoon<Else/>evening</If></If> to you, (Mistress/Master)
+
+（★未使用／削除予定★）
+*/
+
+/*
+SHOULD BE FIXED
+
+[(GERMAN) no feminine option for gendered text]
+
+important news from you, <Split(<Highlight>ObjectParameter(1)</Highlight>, ,1)/>! Lady Leveva and Quimperain
+Oh, vous êtes <Highlight>ObjectParameter(1)</Highlight>, (la/le) célèbre Hériti(ère/er) de la Septième Aube!
+
+「<Sheet(Item,5333,0)/>」は、ふわふわの「<Sheet(Item,5341,0)/>」をつむいで作る糸よ。
+悪さをする「<Sheet(BNpcName,3495,0)/>」を倒してほしいんだ。
+
+mir [[item]] zu. <Clickable([[item]] dafür
+<Clickable([[item]])/>
+
+*/
+
+// la gloire de la grande frairie
+// his whiskers
+// Große Flosse
+// おおなまずのまにまに
