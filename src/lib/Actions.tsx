@@ -152,6 +152,12 @@ export default abstract class Actions extends Component<AppState,AppState> {
       toChange = this.Gender(toChange);
     }
 
+    // change character name to placeholder
+    let cName = /<Split\(<Highlight>ObjectParameter\(.?\)<\/Highlight>.{2,4}\)\/>/;
+    if(cName.test(toChange)){
+      toChange = toChange.replace(cName, "[[character name]]");
+    }
+
     // Fix display of things that reference other sheets
     if(/Item/.test(toChange)){
       toChange = toChange.replace(/<.{6,14}Item.{10,18}\/>/g,"[[item]]");
