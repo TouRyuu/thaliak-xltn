@@ -151,12 +151,18 @@ export default abstract class Actions extends Component<AppState,AppState> {
     if(/PlayerParameter\(4\)/.test(toChange)){
       toChange = this.Gender(toChange);
     }
+
+    // Fix display of racial text
+    if(/PlayerParameter\(71\)/.test(toChange)){
+      toChange = this.Gender(toChange);
+    }
     
     // change character name to placeholder
-    let cName = /<Highlight>ObjectParameter\(1\)<\/Highlight>/g;
-    //let cName = /<Split\(<Highlight>ObjectParameter\(.?\)<\/Highlight>.{2,6}\)\/>/g;
-    if(cName.test(toChange)){
-      toChange = toChange.replace(cName, "[[character name]]");
+    let cNameS = /<Highlight>ObjectParameter\(1\)<\/Highlight>/g;
+    let cNameL = /<Split\(<Highlight>ObjectParameter\(.?\)<\/Highlight>.{2,6}\)\/>/g;
+    if(cNameS.test(toChange)){
+      toChange = toChange.replace(cNameL, "[[character name]]");
+      toChange = toChange.replace(cNameS, "[[character name]]");
     }
 
     // Fix display of things that reference other sheets
@@ -182,44 +188,40 @@ export default abstract class Actions extends Component<AppState,AppState> {
 
     // remove stray tag closers
     // This should be uncommented once I'm happy with everything else
-    toChange = toChange.replace(/\/>/g, "")
+    //toChange = toChange.replace(/\/>/g, "")
 
     // send the new text back
     let changed = toChange;
     return changed;
   }
 
-  // This function handles gendered text,
-  // as designated in the text by PlayerParameter(4)
+  // This function handles gendered & racial text,
+  // as designated in the text by PlayerParameter(4) & PlayerParameter(71)
   Gender(fix:string):string {
     // get number of times PP4 is used
-    let num = (fix.split(/<If\(PlayerParameter\(4\)\)>/g).length -1);
-    
-    // These regex may need adjustments to be more specific about
-    // how many characters to go between tags. There are some 
-    // situations where it combines the first and last occurance into
-    // the same fix - but not always.
+    let num = (fix.split(/\(PlayerParameter\(.{0,2}\)/g).length -1);
 
     // cycle through the string that many times
     for(let i = 0; i < num; i++){
-      // sections with only FEMININE option
+      // sections with only TRUE option
       if(/<Else\/><\/If>/.test(fix)){
-        fix = fix.replace(/<If\(PlayerParameter\(4\)\)>.*<Else\/><\/If>/, (x)=>{
-          x = x.replace(/<If\(PlayerParameter\(4\)\)>/, "(");
+        //<If.{0,6}\(PlayerParameter\(.{0,2}\).{0,4}\)>.{0,20}<Else\/>.{0,20}<\/If>
+        fix = fix.replace(/<If.{0,6}\(PlayerParameter\(.{0,2}\).{0,4}\)>.{1,20}<Else\/><\/If>/, (x)=>{
+          x = x.replace(/<If.{0,6}\(PlayerParameter\(.{0,2}\).{0,4}\)>/, "(");
           x = x.replace(/<Else\/><\/If>/, ")");
           return x;
         });
-      // sections with only MASCULINE option
-      } else if(/<If\(PlayerParameter\(4\)\)><Else\/>.*<\/If>/.test(fix)){
-        fix = fix.replace(/<If\(PlayerParameter\(4\)\)><Else\/>.*<\/If>/, (x)=>{
-          x = x.replace(/<If\(PlayerParameter\(4\)\)><Else\/>/, "(");
+      // sections with only FALSE option
+      } else if(/<If.{0,6}\(PlayerParameter\(.{0,2}\).{0,4}\)><Else\/>/.test(fix)){
+        fix = fix.replace(/<If.{0,6}\(PlayerParameter\(.{0,2}\).{0,4}\)><Else\/>.{1,20}<\/If>/, (x)=>{
+          x = x.replace(/<If.{0,6}\(PlayerParameter\(.{0,2}\).{0,4}\)><Else\/>/, "(");
           x = x.replace(/<\/If>/, ")");
           return x;
         });
-      // sections with both FEMININE and MASCULINE options
+      // sections with both TRUE and FALSE options
       } else {
-        fix = fix.replace(/<If\(PlayerParameter\(4\)\)>.*<Else\/>.*<\/If>/, (x)=>{
-          x = x.replace(/<If\(PlayerParameter\(4\)\)>/, "(");
+        fix = fix.replace(/<If.{0,6}\(PlayerParameter\(.{0,2}\).{0,4}\)>.{1,20}<Else\/>.{1,20}<\/If>/, (x)=>{
+          x = x.replace(/<If.{0,6}\(PlayerParameter\(.{0,2}\).{0,4}\)>/, "(");
           x = x.replace(/<Else\/>/, "/");
           x = x.replace(/<\/If>/, ")");
           return x;
@@ -232,25 +234,38 @@ export default abstract class Actions extends Component<AppState,AppState> {
 }
 
 /*
-Si l'aventuri(ère<Else/>er</If> est aussi gentil(le) qu'(elle/il) en a l'air, (elle/il) ira botter les fesses de ces fichus engins! <If(PlayerParameter(4))>Elle/Il) n'a qu'à en casser trois près de L'Arkhitékton, ça embêtera bien la Main indigo!
+REMAINING PROBLEMS
 
-Si l'aventuri(ère<Else/>er</If> 
-  est aussi gentil(le) qu'(elle/il) en a l'air, (elle/il) ira botter
-  les fesses de ces fichus engins! <If(PlayerParameter(4))>Elle/Il) 
-  n'a qu'à en casser trois près de L'Arkhitékton, ça embêtera bien 
-  la Main indigo!
-
-Des Roegadyns comme <If(Equal(PlayerParameter(71),5))>vous et moi<Else/>moi</If> auront utilisé cette pioche.
-
-A pleasant <If(LessThan(PlayerParameter(11),12))><If(LessThan(PlayerParameter(11),4))>evening<Else/>morning</If><Else/><If(LessThan(PlayerParameter(11),17))>afternoon<Else/>evening</If></If> to you, (Mistress/Master)
-
-（★未使用／削除予定★）
+** PP(11) is time of day
+A pleasant 
+<If(LessThan(PlayerParameter(11),12))>
+  <If(LessThan(PlayerParameter(11),4))>
+    evening
+  <Else/>
+    morning
+  </If>
+<Else/>
+  <If(LessThan(PlayerParameter(11),17))>
+    afternoon
+  <Else/>
+    evening
+  </If>
+</If>
+ to you, (Mistress/Master)
 */
 
 /*
 SHOULD BE FIXED
 
 [(GERMAN) no feminine option for gendered text]
+
+[[character name]], ,1)/>
+
+Si l'aventuri(ère<Else/>er</If> est aussi gentil(le) qu'(elle/il) en a l'air, (elle/il) ira botter les fesses de ces fichus engins! <If(PlayerParameter(4))>Elle/Il) n'a qu'à en casser trois près de L'Arkhitékton, ça embêtera bien la Main indigo!
+Si l'aventuri<If(PlayerParameter(4))>ère<Else/>er</If> est aussi gentil<If(PlayerParameter(4))>le<Else/></If> qu'<If(PlayerParameter(4))>elle<Else/>il</If> en a l'air, <If(PlayerParameter(4))>elle<Else/>il</If> ira botter les fesses de ces fichus engins! <If(PlayerParameter(4))>Elle<Else/>Il</If> n'a qu'à en casser trois près de L'Arkhitékton, ça embêtera bien la Main indigo!
+
+** PP(71) is character race
+Des Roegadyns comme <If(Equal(PlayerParameter(71),5))>vous et moi<Else/>moi</If> auront utilisé cette pioche.
 
 important news from you, <Split(<Highlight>ObjectParameter(1)</Highlight>, ,1)/>! Lady Leveva and Quimperain
 Oh, vous êtes <Highlight>ObjectParameter(1)</Highlight>, (la/le) célèbre Hériti(ère/er) de la Septième Aube!
@@ -267,3 +282,10 @@ mir [[item]] zu. <Clickable([[item]] dafür
 // his whiskers
 // Große Flosse
 // おおなまずのまにまに
+
+/*
+
+（★未使用／削除予定★）
+
+DE: Leer / EN: Textless / JP: [kuu]raberu
+*/
