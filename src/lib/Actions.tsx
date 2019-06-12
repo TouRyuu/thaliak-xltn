@@ -52,9 +52,6 @@ export default abstract class Actions extends Component<AppState,AppState> {
   GetText(){
     // Fetch new quest text from XIVAPI
     let page:number = -1;
-    let qIndex:number = -1;
-    let dIndex:number = -1;
-    let name = "";
     
     // get a random PAGE number
     if(this.state.pages !== undefined){
@@ -64,6 +61,9 @@ export default abstract class Actions extends Component<AppState,AppState> {
     
     // Ask the API for the random PAGE's list
     xiv.data.list(`Quest?page=${page}`).then((response:any) => {
+      let qIndex:number = -1;
+      let name:string;
+
       do {
         // get a random ITEM number based on how many results are on the page
         qIndex = this.RNG(response.Pagination.Results);
@@ -75,44 +75,31 @@ export default abstract class Actions extends Component<AppState,AppState> {
         }
       }while(name === "")
 
-      // once the name value is OK, update `item` to store the ID
+      // once the name value is OK, update `qIndex` to store the Quest's ID
       qIndex = response.Results[qIndex].ID;
 
       // use the item ID to get details about that Quest
       xiv.data.get("Quest",qIndex).then((response:any) => {
-        let tempDE = response.TextData_de.Dialogue;
-        let tempEN = response.TextData_en.Dialogue;
-        let tempFR = response.TextData_fr.Dialogue;
-        let tempJP = response.TextData_ja.Dialogue;
+        let OrderID:number = -1;
+        let dIndex:number;
         
-        // get a random DIALOGUE number
-        dIndex = this.RNG(tempEN.length);
-
-        tempDE = tempDE[dIndex].Text;
-        tempEN = tempEN[dIndex].Text;
-        tempFR = tempFR[dIndex].Text;
-        tempJP = tempJP[dIndex].Text;
-
-        if(/>/.test(tempDE)){
-          tempDE = this.ReplaceCode(tempDE);
-        }
-        if(/>/.test(tempEN)){
-          tempEN = this.ReplaceCode(tempEN);
-        }
-        if(/>/.test(tempFR)){
-          tempFR = this.ReplaceCode(tempFR);
-        }
-        if(/>/.test(tempJP)){
-          tempJP = this.ReplaceCode(tempJP);
-        }
+        do{
+          // get a random DIALOGUE index number
+          dIndex = this.RNG((response.TextData.Dialogue).length);
+          // check if the text was marked for deletion
+          if((response.TextData.Dialogue[dIndex].Text !== "（★未使用／削除予定★）") ||
+             (response.TextData.Dialogue[dIndex].Text !== "（カット）")){
+            OrderID = parseInt(response.TextData.Dialogue[dIndex].Order);
+          }
+        } while (OrderID === -1);
 
         // assign strings to state & set haveText to true
         this.setState({
           text: {
-            DE: tempDE,
-            EN: tempEN,
-            FR: tempFR,
-            JP: tempJP
+            DE: this.AssignText(response.TextData_de.Dialogue, OrderID, dIndex),
+            EN: this.AssignText(response.TextData_en.Dialogue, OrderID, dIndex),
+            FR: this.AssignText(response.TextData_fr.Dialogue, OrderID, dIndex),
+            JP: this.AssignText(response.TextData_ja.Dialogue, OrderID, dIndex)
           },
           haveText: true
         });
@@ -132,6 +119,28 @@ export default abstract class Actions extends Component<AppState,AppState> {
     return res;
   }
 
+  AssignText(dialogue:any, order:number, index:number):string{
+    let temp = "";
+    if(parseInt(dialogue[index].Order) === order){
+      temp = dialogue[index].Text;
+    } else {
+      index = 0;
+      do {
+        if(parseInt(dialogue[index].Order) === order){
+          temp = dialogue[index].Text;
+        } else {
+          index++;
+        }
+      } while(temp === "");
+    }
+
+    if(/</.test(temp)){
+      temp = this.ReplaceCode(temp);
+    }
+    
+    return temp;
+  }
+
   ReplaceCode(toChange:string):string{
     // basic replacements/removals
     toChange = toChange.replace(/<SoftHyphen\/>/g, "-");
@@ -144,12 +153,10 @@ export default abstract class Actions extends Component<AppState,AppState> {
       toChange = toChange.replace(/<If\(PlayerParameter\(4\)\)>/g,"<If>");
 
       // Fix display of time-relative text
-      // /<If\(LessThan\(PlayerParameter\(11\),12\)\)>/
       toChange = toChange.replace(/<If\(LessThan\(PlayerParameter\(11\),\d{1,3}\)\)>/g, "<If>")
       
       // Fix display of PlayerParameter(68), which references current job
       toChange = toChange.replace(/<If.{0,8}\(PlayerParameter\(68\).{0,8}/, "<If>")
-      // This handles any locations of self-closing tags
       toChange = toChange.replace(/<.{9,16}PlayerParameter\(68\).{0,8}>/g,"[[class/job]]")
 
       // Fix display of racial text
@@ -170,7 +177,7 @@ export default abstract class Actions extends Component<AppState,AppState> {
     if(/<Sheet/.test(toChange)){
       toChange = toChange.replace(/<.{6,9}EObj.{6,18}\/>/g,"[[Event Object]]");
       toChange = toChange.replace(/<.{6,9}BNpcName.{6,18}\/>/g, "[[monster]]");
-      // This first Regex allows more text in front than the other two
+      // This Regex allows more text in front than the previous two
       // Because I want it to also catch EventItem
       toChange = toChange.replace(/<.{6,14}Item.{6,18}\/>/g,"[[item]]");
       // Sometimes gendered language shows up for item/monster names; prepare for fix
@@ -180,7 +187,7 @@ export default abstract class Actions extends Component<AppState,AppState> {
     // Fix any If/Else blocks that were prepared by previous replaces
     if(/<If>/.test(toChange)){
       // Replaces for nested If blocks so they also look good
-      // This was built specifically for time checks, but may also work for Class/Job
+      // This was built specifically for time checks, but may also work for Class/Job blocks
       toChange = toChange.replace(/<If><If>/g, "(");
       toChange = toChange.replace(/<\/If><Else\/><If>/g, "/");
       toChange = toChange.replace(/<\/If><\/If>/g, ")");
@@ -202,12 +209,9 @@ export default abstract class Actions extends Component<AppState,AppState> {
       toChange = toChange.replace(/<Clickable\(/g, "");
 
       // remove stray tag closers here
-      // This should be uncommented once I'm happy with everything else
-      // If I put it in before everything else is done it will just be confusing
-      //toChange = toChange.replace(/\/>/g, "")
+      toChange = toChange.replace(/\/>/g, "")
     }
 
-    // send the new text back
     return toChange;
   }
 }
@@ -224,17 +228,7 @@ Un grand merci pour votre col-la-bo-ra-tion, <If(GreaterThan(PlayerParameter(52)
 ** Massive class/job blocks
 
 */
-
-
 // la gloire de la grande frairie
 // his whiskers
 // Große Flosse
 // おおなまずのまにまに
-
-/*
-Deletion placeholders.
-
-（★未使用／削除予定★）
-（カット）
-DE: Leer / EN: Textless / JP: [kuu]raberu
-*/
