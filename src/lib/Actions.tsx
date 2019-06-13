@@ -140,37 +140,42 @@ export default abstract class Actions extends Component<AppState,AppState> {
     
     return temp;
   }
-
+  
   ReplaceCode(toChange:string):string{
     // basic replacements/removals
-    toChange = toChange.replace(/<SoftHyphen\/>/g, "-");
+    toChange = toChange.replace(/<SoftHyphen\/>/g, "-"); // Soft Hyphen code: \u00AD
     toChange = toChange.replace(/<Indent\/>/g, "");
     toChange = toChange.replace(/<.?Emphasis>/g, "");
     toChange = toChange.replace(/<UIForeground>.?[0-9]*<\/UIForeground>/g, "");
 
     if(/PlayerParameter/.test(toChange)){
       // Fix display of gendered text
-      toChange = toChange.replace(/<If\(PlayerParameter\(4\)\)>/g,"<If>");
+      toChange = toChange.replace(/<If.{0,7}\(PlayerParameter\(4\).{0,3}\)>/g,"<If>");
 
       // Fix display of time-relative text
       toChange = toChange.replace(/<If\(LessThan\(PlayerParameter\(11\),\d{1,3}\)\)>/g, "<If>");
       
       // Fix display of PlayerParameter(52-54), which handle GC
       toChange = toChange.replace(/<If\(GreaterThan\(PlayerParameter\(5\d\),0\)\)>/g, "<If>");
-      toChange = toChange.replace(/<Sheet\(GCRank.{9,15}Text,PlayerParameter\(5\d\),\d\)\/>/g, "[[GC Rank]]");
-
+      toChange = toChange.replace(/<Sheet\(GCRankLimsaMaleText,PlayerParameter\(52\),\d\)\/>/g, "[[♂ Limsa Rank]]");
+      toChange = toChange.replace(/<Sheet\(GCRankGridaniaMaleText,PlayerParameter\(53\),\d\)\/>/g, "[[♂ Gridania Rank]]");
+      toChange = toChange.replace(/<Sheet\(GCRankUldahMaleText,PlayerParameter\(54\),\d\)\/>/g, "[[♂ Ul'dah Rank]]");
+      toChange = toChange.replace(/<Sheet\(GCRankLimsaFemaleText,PlayerParameter\(52\),\d\)\/>/g, "[[♀ Limsa Rank]]");
+      toChange = toChange.replace(/<Sheet\(GCRankGridaniaFemaleText,PlayerParameter\(53\),\d\)\/>/g, "[[♀ Gridania Rank]]");
+      toChange = toChange.replace(/<Sheet\(GCRankUldahFemaleText,PlayerParameter\(54\),\d\)\/>/g, "[[♀ Ul'dah Rank]]");
+      
       // Fix display of PlayerParameter(68), which references current job
-      toChange = toChange.replace(/<If.{0,8}\(PlayerParameter\(68\).{0,8}/, "<If>");
-      toChange = toChange.replace(/<.{9,16}PlayerParameter\(68\).{0,8}>/g,"[[class/job]]");
+      toChange = toChange.replace(/<If\(Equal\(PlayerParameter\(68\),\d{0,2}\)\)>/g,  "<If>");
+      toChange = toChange.replace(/<Sheet\(ClassJob,PlayerParameter\(68\),\d{0,2}\)\/>/g, "[[class/job]]");
 
       // Fix 71 (Starting City - 1: Limsa/Ul'dah; 2: Gridania; 3: Limsa/Ul'dah)
       if(/<Switch\(PlayerParameter\(70\)\)>/.test(toChange)){
         toChange = toChange.replace(/<Switch\(PlayerParameter\(70\)\)>/g, "(");
-        toChange = toChange.replace(/<Case\(1\)>/g, "[[Limsa/Ul'dah]]");
-        toChange = toChange.replace(/<Case\(2\)>/g, "[[Gridania]]");
-        toChange = toChange.replace(/<Case\(3\)>/g, "[[Limsa/Ul'dah]]");
+        toChange = toChange.replace(/<Case\(1\)>/g, " [[Limsa/Ul'dah]] ");
+        toChange = toChange.replace(/<Case\(2\)>/g, " [[Gridania]] ");
+        toChange = toChange.replace(/<Case\(3\)>/g, " [[Limsa/Ul'dah]] ");
         toChange = toChange.replace(/<\/Case><\/Switch>/g, ")");
-        toChange = toChange.replace(/<\/Case>/g, "/ ")
+        toChange = toChange.replace(/<\/Case>/g, "/")
       }
 
       // Fix display of racial text
@@ -181,21 +186,22 @@ export default abstract class Actions extends Component<AppState,AppState> {
     // cNameS is for when the code would display a character's full name
     let cNameS = /<Highlight>ObjectParameter\(1\)<\/Highlight>/g;
     // cNameL is for when the code would display first OR last name
-    let cNameL = /<Split\(<Highlight>ObjectParameter\(1\)<\/Highlight>.{2,7}\)\/>/;
-    if(cNameS.test(toChange)){
+    let cNameL = /<Split\(<Highlight>ObjectParameter\(1\)<\/Highlight>,.{0,3},.{0,3}\)\/>/g;
+    if(/ObjectParameter\(1\)/.test(toChange)){
       toChange = toChange.replace(cNameL, "[[character name]]");
       toChange = toChange.replace(cNameS, "[[character name]]");
     }
+    
 
     // Fix display of things that reference other sheets
     if(/<Sheet/.test(toChange)){
-      toChange = toChange.replace(/<.{6,9}EObj.{6,18}\/>/g,"[[Event Object]]");
-      toChange = toChange.replace(/<.{6,9}BNpcName.{6,18}\/>/g, "[[monster]]");
+      toChange = toChange.replace(/<Sheet.{0,4}EObj.{6,18}\/>/g,"[[Event Object]]");
+      toChange = toChange.replace(/<Sheet.{0,4}BNpcName.{6,18}\/>/g, "[[monster]]");
       // This Regex allows more text in front than the previous two
       // Because I want it to also catch EventItem
-      toChange = toChange.replace(/<.{6,14}Item.{6,18}\/>/g,"[[item]]");
+      toChange = toChange.replace(/<Sheet.{0,9}Item.{6,18}\/>/g,"[[item]]");
       // Sometimes gendered language shows up for item/monster names; prepare for fix
-      toChange = toChange.replace(/<If\(\[\[.{1-13}\]\]\)>/, "<If>");
+      toChange = toChange.replace(/<If\(\[\[.{1,13}\]\]\)>/g, "<If>");
     }
 
     // Fix any If/Else blocks that were prepared by previous replaces
@@ -215,28 +221,18 @@ export default abstract class Actions extends Component<AppState,AppState> {
       toChange = toChange.replace(/<\/If>/g, ")");
     }
 
-    // check if there's still angle braces in the text
-    if(/</.test(toChange) || />/.test(toChange)){
-      // remove leftover wrappers such as Clickable and Split
-      // only removing the front here, as sometimes the end is grabbed by earlier replaces
-      toChange = toChange.replace(/<Split\(/g, "");
-      toChange = toChange.replace(/<Clickable\(/g, "");
-
-      // remove stray tag closers here
-      toChange = toChange.replace(/]].{0,8}\/>/g, "]]");
+    // Cleanup for messy if blocks - remove duplicate ( / ) characters
+    if((/\({2,}/.test(toChange)) || (/\/{2,}/.test(toChange)) || (/\){2,}/.test(toChange)) || 
+      (/\)\//.test(toChange)) || (/\/\(/.test(toChange))){
+        toChange = toChange.replace(/\({2,}/g, "("); // 2 or more ( with a single (
+        toChange = toChange.replace(/\/{2,}/g, "/"); // 2 or more / with a single /
+        toChange = toChange.replace(/\){2,}/g, ")"); // 2 or more ) with a single )
+        toChange = toChange.replace(/\)\//g, "/"); // )/ with a single /
+        toChange = toChange.replace(/\/\(/g, "/"); // /( with a single /
     }
-
+    // add a zero-width space to the right of any / character to allow for line breaks
+    toChange = toChange.replace(/\//g, "/\u200B");
+    
     return toChange;
   }
 }
-
-/*
-REMAINING PROBLEMS
-
-** Massive class/job blocks
-
-*/
-// la gloire de la grande frairie
-// his whiskers
-// Große Flosse
-// おおなまずのまにまに
