@@ -31,11 +31,16 @@ select {
   height: 110px;
   width: 100%;
   margin: 0px;
-  padding-left: 20px;
+}
+
+h1 {
+  margin-left: 20px;
+  margin-bottom: 5px;
 }
 
 .Subtext {
   font-style: italic;
+  margin-left: 40px;
 }
 
 .ContentContainer {
@@ -81,9 +86,9 @@ select {
 }
 
 .Button {
-  background-color: rgba(176,139,253, 0.6);
-  border: 7px solid rgba(129,63,139,1);
-  color: #662370;
+  background-color: rgba(70, 191, 255, 0.6);
+  border: none;
+  color: #000000;
   font-size: 1.5em;
   font-weight: bold;
   width: 110px;
