@@ -153,11 +153,25 @@ export default abstract class Actions extends Component<AppState,AppState> {
       toChange = toChange.replace(/<If\(PlayerParameter\(4\)\)>/g,"<If>");
 
       // Fix display of time-relative text
-      toChange = toChange.replace(/<If\(LessThan\(PlayerParameter\(11\),\d{1,3}\)\)>/g, "<If>")
+      toChange = toChange.replace(/<If\(LessThan\(PlayerParameter\(11\),\d{1,3}\)\)>/g, "<If>");
       
+      // Fix display of PlayerParameter(52-54), which handle GC
+      toChange = toChange.replace(/<If\(GreaterThan\(PlayerParameter\(5\d\),0\)\)>/g, "<If>");
+      toChange = toChange.replace(/<Sheet\(GCRank.{9,15}Text,PlayerParameter\(5\d\),\d\)\/>/g, "[[GC Rank]]");
+
       // Fix display of PlayerParameter(68), which references current job
-      toChange = toChange.replace(/<If.{0,8}\(PlayerParameter\(68\).{0,8}/, "<If>")
-      toChange = toChange.replace(/<.{9,16}PlayerParameter\(68\).{0,8}>/g,"[[class/job]]")
+      toChange = toChange.replace(/<If.{0,8}\(PlayerParameter\(68\).{0,8}/, "<If>");
+      toChange = toChange.replace(/<.{9,16}PlayerParameter\(68\).{0,8}>/g,"[[class/job]]");
+
+      // Fix 71 (Starting City - 1: Limsa/Ul'dah; 2: Gridania; 3: Limsa/Ul'dah)
+      if(/<Switch\(PlayerParameter\(70\)\)>/.test(toChange)){
+        toChange = toChange.replace(/<Switch\(PlayerParameter\(70\)\)>/g, "(");
+        toChange = toChange.replace(/<Case\(1\)>/g, "[[Limsa/Ul'dah]]");
+        toChange = toChange.replace(/<Case\(2\)>/g, "[[Gridania]]");
+        toChange = toChange.replace(/<Case\(3\)>/g, "[[Limsa/Ul'dah]]");
+        toChange = toChange.replace(/<\/Case><\/Switch>/g, ")");
+        toChange = toChange.replace(/<\/Case>/g, "/ ")
+      }
 
       // Fix display of racial text
       toChange = toChange.replace(/<If.{0,6}\(PlayerParameter\(71\).{0,4}\)>/g,"<If>");
@@ -167,7 +181,7 @@ export default abstract class Actions extends Component<AppState,AppState> {
     // cNameS is for when the code would display a character's full name
     let cNameS = /<Highlight>ObjectParameter\(1\)<\/Highlight>/g;
     // cNameL is for when the code would display first OR last name
-    let cNameL = /<Split\(<Highlight>ObjectParameter\(1\)<\/Highlight>.{2,6}\)\/>/;
+    let cNameL = /<Split\(<Highlight>ObjectParameter\(1\)<\/Highlight>.{2,7}\)\/>/;
     if(cNameS.test(toChange)){
       toChange = toChange.replace(cNameL, "[[character name]]");
       toChange = toChange.replace(cNameS, "[[character name]]");
@@ -209,7 +223,7 @@ export default abstract class Actions extends Component<AppState,AppState> {
       toChange = toChange.replace(/<Clickable\(/g, "");
 
       // remove stray tag closers here
-      toChange = toChange.replace(/\/>/g, "")
+      toChange = toChange.replace(/]].{0,8}\/>/g, "]]");
     }
 
     return toChange;
@@ -218,12 +232,6 @@ export default abstract class Actions extends Component<AppState,AppState> {
 
 /*
 REMAINING PROBLEMS
-
-Thank you, <If(GreaterThan(PlayerParameter(52),0))><Sheet(GCRankLimsaMaleText,PlayerParameter(52),8)/><Else/></If><If(GreaterThan(PlayerParameter(53),0))><Sheet(GCRankGridaniaMaleText,PlayerParameter(53),8)/><Else/></If><If(GreaterThan(PlayerParameter(54),0))><Sheet(GCRankUldahMaleText,PlayerParameter(54),8)/><Else/></If>)/> [[character name]]─this will go a long way to helping the nation recover from the ravages of war!
-Un grand merci pour votre col-la-bo-ra-tion, <If(GreaterThan(PlayerParameter(52),0))><If(GreaterThan(PlayerParameter(52),0))>(<Sheet(GCRankLimsaFemaleText,PlayerParameter(52),0)/>/<Sheet(GCRankLimsaMaleText,PlayerParameter(52),0)/>)) [[character name]])<If(GreaterThan(PlayerParameter(53),0))><If(GreaterThan(PlayerParameter(53),0))>(<Sheet(GCRankGridaniaFemaleText,PlayerParameter(53),0)/>/<Sheet(GCRankGridaniaMaleText,PlayerParameter(53),0)/>)) [[character name]], ,2)/>)<If(GreaterThan(PlayerParameter(54),0))><If(GreaterThan(PlayerParameter(54),0))>(<Sheet(GCRankUldahFemaleText,PlayerParameter(54),0)/>/<Sheet(GCRankUldahMaleText,PlayerParameter(54),0)/>)) [[character name]], ,2)/>)!
-
-** PlayerParameter(70) is...?
-<Switch(PlayerParameter(70))><Case(1)>The building you seek stands in the southern part of the city, now called New Gridania</Case><Case(2)>I daresay you know it well from your wanderings in New Gridania</Case><Case(3)>The building you seek stands in the southern part of the city, now called New Gridania</Case></Switch>. Give your name to the personnel officer there, and he will guide you through the formalities.
 
 ** Massive class/job blocks
 
