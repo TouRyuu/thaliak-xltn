@@ -6,23 +6,7 @@ body {
   margin: 0px;
 }
 
-p {
-  margin: 0px;
-}
-
-textarea {
-  resize: none;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-}
-
-select {
-  margin-left: 5px;
-  margin-right: 5px;
-}
-
-.Header {
+header {
   background-color: rgba(24, 23, 31, 0.8);
   margin-top: 0px;
   position: absolute;
@@ -36,6 +20,7 @@ select {
 h1 {
   margin-left: 20px;
   margin-bottom: 5px;
+  margin-top: 5px;
 }
 
 .Subtext {
@@ -44,57 +29,124 @@ h1 {
 }
 
 .ContentContainer {
+  height: 100%;
+  width: 100%;
+}
+
+p {
+  margin: 0px;
+}
+
+textarea {
+  resize: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  margin: 0px;
+  padding: 0px;
+}
+
+select {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+main {
   background-color: rgba(255, 255, 255, 0.6);
   padding: 30px;
   width: 750px;
+  height: 442px;
   margin-top: 150px;
   margin-left: auto;
   margin-right: auto;
-  position: relative;
+
+  display: grid;
+  grid-template:
+      "selector"
+      "source"
+      "userinput"
+      "target";
+  grid-template-rows: auto 1fr 1fr 1fr;
+  grid-gap: 10px;
+  align-content: space-between;
+  align-items: stretch;
+}
+
+.LanguageSelector {
+  width: auto;
+  height: auto;
+  grid-area: selector;
 }
 
 .OfficialText {
   background-color: rgba(255, 255, 255, 0.6);
-  margin: 5px;
   padding: 5px;
-  height: 100px;
-  width: auto;
-  position: relative;
   overflow:auto;
+}
+
+.SourceText {
+  grid-area: source;
+}
+
+.TargetText {
+  grid-area: target;
 }
 
 .UserInput {
   margin: 0px;
   padding: 0px;
-  width: auto;
-  height: 120px;
-  background-color: none;
-  position: relative;
-  overflow:auto;
+
+  grid-area: userinput;
+
+  display: grid;
+  grid-template: "input button";
+  grid-template-columns: 1fr 110px;
+  grid-gap: 10px;
+  justify-content: stretch;
 }
 
 .UserText {
   background-color: rgba(255, 255, 255, 0.6);
-  margin: 5px;
   padding: 5px;
-  height: 100px;
-  width: 610px;
-  position: absolute;
-  border: 0px;
-  top: 0px;
   overflow:auto;
+  border: none;
+  
+  grid-area: input;
 }
 
 .Button {
   background-color: rgba(70, 191, 255, 0.6);
-  border: none;
   color: #000000;
-  font-size: 1.5em;
+  font-size: 25px;
+  height: 100%;
   font-weight: bold;
-  width: 110px;
-  height: 110px;
-  margin: 5px;
-  position: absolute;
-  top: 0px;
-  right: 0px;
+  border: none;
+  padding: 5px;
+
+  grid-area: button;
+}
+
+.Button:hover {
+  background-color: rgba(0, 44, 68, 0.6);
+  color: #ffffff;
+}
+
+@media only screen and (max-width: 750px){
+  header {
+    height: 85px;
+  }
+
+  main {
+    margin-top: 115px;
+    width: 80vw;
+    height: 75vh;
+    grid-template-rows: auto 1fr 1.2fr 1fr;
+  }
+
+  .UserInput {
+    grid-template: 
+    "input"
+    "button";
+    grid-template-rows: 1fr auto;
+  }
 }

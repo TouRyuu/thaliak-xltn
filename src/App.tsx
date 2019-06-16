@@ -57,29 +57,29 @@ export default class Thaliak extends Actions {
     }
 
     return(
-      <div>
+      <div className="ContentContainer">
         <Comp.Header />
-
         <Comp.Container>
+          <div className="LanguageSelector">
+            <label>Translate
+              <select value={this.state.from} onChange={(e) => this.ChangeLang(e,"from")}>
+                <option value="DE">deutsche</option>
+                <option value="EN">English</option>
+                <option value="FR">Française</option>
+                <option value="JP">日本語</option>
+              </select>
+            </label>
+            <label>➔
+              <select value={this.state.to} onChange={(e) => this.ChangeLang(e,"to")}>
+                <option value="DE">deutsche</option>
+                <option value="JP">日本語</option>
+                <option value="FR">Française</option>
+                <option value="EN">English</option>
+              </select>
+            </label>
+          </div>
 
-        <label>Translate
-          <select value={this.state.from} onChange={(e) => this.ChangeLang(e,"from")}>
-            <option value="DE">deutsche</option>
-            <option value="EN">English</option>
-            <option value="FR">Française</option>
-            <option value="JP">日本語</option>
-          </select>
-        </label>
-        <label>->
-          <select value={this.state.to} onChange={(e) => this.ChangeLang(e,"to")}>
-            <option value="DE">deutsche</option>
-            <option value="JP">日本語</option>
-            <option value="FR">Française</option>
-            <option value="EN">English</option>
-          </select>
-        </label>
-          
-          <div className="OfficialText">
+          <div className="OfficialText SourceText">
             {this.state.isNew && !this.state.haveText &&
               <p>Loading...</p>
             }
@@ -90,7 +90,7 @@ export default class Thaliak extends Actions {
 
           <UserArea pState={this.state} handleClick={this.HandleClick} />
 
-          <div className="OfficialText">
+          <div className="OfficialText TargetText">
             {!this.state.isNew &&
               <p>{target}</p>
             }

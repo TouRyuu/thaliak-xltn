@@ -23,14 +23,12 @@ export default class UserArea extends Component<any, any> {
     }
 
     render(){
-    const pState = this.props.pState;
-    let input = this.state.input;
-    let label = pState.isNew ? `Show ${pState.to}` : "Next";
-    
-    return(
-        <div className="UserInput">
-            
-            <form onSubmit={(e)=>{this.handleClick(e)}}>
+        const pState = this.props.pState;
+        let input = this.state.input;
+        let label = pState.isNew ? `Show ${pState.to}` : "Next";
+        
+        return(
+            <form onSubmit={(e)=>{this.handleClick(e)}} className="UserInput">
                 {pState.isNew &&
                     <textarea
                         className="UserText"
@@ -46,9 +44,8 @@ export default class UserArea extends Component<any, any> {
                 
                 <Button label={label} />
             </form>
-        </div>
-    )
-            }
+        )
+    }
 }
 
 // Button is only used by UserArea, so does not get exported.
