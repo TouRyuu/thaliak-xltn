@@ -3,19 +3,19 @@ import React from 'react'
 
 export function Header (props:any) {
     return (
-        <div className="Header">
+        <header>
             <h1>Thaliak's Translations</h1>
             <span className="Subtext">A FFXIV Translation Practice Tool</span>
-        </div>
+        </header>
     )
 }
 
 export function Container (props:any) {
     return (
-        <div className="ContentContainer">
+        <main>
 
             {props.children}
 
-        </div>
+        </main>
     )
 }
