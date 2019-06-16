@@ -135,7 +135,11 @@ main {
   color: #ffffff;
 }
 
-@media only screen and (max-width: 750px){
+@media only screen and (max-width: 850px){
+  body {
+    font-size: 18px;
+  }
+  
   header {
     height: 85px;
   }
