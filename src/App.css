@@ -4,6 +4,7 @@ body {
   background-color: #383c48;
   padding: 0px;
   margin: 0px;
+  font-size: 18px;
 }
 
 header {
@@ -12,7 +13,7 @@ header {
   position: absolute;
   top: 0px;
   color: rgba(255, 255, 255, 0.8);
-  height: 110px;
+  height: 85px;
   width: 100%;
   margin: 0px;
 }
@@ -44,6 +45,7 @@ textarea {
     sans-serif;
   margin: 0px;
   padding: 0px;
+  font-size: 18px;
 }
 
 select {
@@ -58,9 +60,9 @@ select {
 main {
   background-color: rgba(255, 255, 255, 0.6);
   padding: 30px;
-  width: 750px;
-  height: 442px;
-  margin-top: 150px;
+  margin-top: 115px;
+  width: 80vw;
+  height: 75vh;
   margin-left: auto;
   margin-right: auto;
 
@@ -103,8 +105,10 @@ main {
   grid-area: userinput;
 
   display: grid;
-  grid-template: "input button";
-  grid-template-columns: 1fr 110px;
+  grid-template: 
+    "input"
+    "button";
+  grid-template-rows: 1fr auto;
   grid-gap: 10px;
   justify-content: stretch;
 }
@@ -135,26 +139,28 @@ main {
   color: #ffffff;
 }
 
-@media only screen and (max-width: 850px){
+@media only screen and (min-width: 850px){
   body {
-    font-size: 18px;
+    font-size: 14px;
   }
   
   header {
-    height: 85px;
+    height: 110px;
   }
 
   main {
-    margin-top: 115px;
-    width: 80vw;
-    height: 75vh;
-    grid-template-rows: auto 1fr 1.2fr 1fr;
+    margin-top: 150px;
+    width: 750px;
+    height: 442px;
+    grid-template-rows: auto 1fr 1fr 1fr;
+  }
+
+  textarea {
+    font-size: 14px;
   }
 
   .UserInput {
-    grid-template: 
-    "input"
-    "button";
-    grid-template-rows: 1fr auto;
+    grid-template: "input button";
+    grid-template-columns: 1fr 110px;
   }
 }
