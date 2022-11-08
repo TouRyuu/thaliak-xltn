@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/static/css/main.7087c0ed.chunk.css",
-    "main.js": "/static/js/main.b1efb92a.chunk.js",
-    "main.js.map": "/static/js/main.b1efb92a.chunk.js.map",
-    "runtime~main.js": "/static/js/runtime~main.a8a9905a.js",
-    "runtime~main.js.map": "/static/js/runtime~main.a8a9905a.js.map",
-    "static/js/2.1f3979a6.chunk.js": "/static/js/2.1f3979a6.chunk.js",
-    "static/js/2.1f3979a6.chunk.js.map": "/static/js/2.1f3979a6.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.8dee2c573d355a5c23c9a7303adeae53.js": "/precache-manifest.8dee2c573d355a5c23c9a7303adeae53.js",
-    "service-worker.js": "/service-worker.js",
-    "static/css/main.7087c0ed.chunk.css.map": "/static/css/main.7087c0ed.chunk.css.map",
-    "static/media/App.css": "/static/media/background.0524f5f0.png"
+    "main.css": "/thaliak-xltn/static/css/main.bda57e9c.chunk.css",
+    "main.js": "/thaliak-xltn/static/js/main.6336503c.chunk.js",
+    "main.js.map": "/thaliak-xltn/static/js/main.6336503c.chunk.js.map",
+    "runtime~main.js": "/thaliak-xltn/static/js/runtime~main.52056de2.js",
+    "runtime~main.js.map": "/thaliak-xltn/static/js/runtime~main.52056de2.js.map",
+    "static/js/2.6c82b5dd.chunk.js": "/thaliak-xltn/static/js/2.6c82b5dd.chunk.js",
+    "static/js/2.6c82b5dd.chunk.js.map": "/thaliak-xltn/static/js/2.6c82b5dd.chunk.js.map",
+    "index.html": "/thaliak-xltn/index.html",
+    "precache-manifest.e75cf47e4c4736ade9f137f7297f6fb8.js": "/thaliak-xltn/precache-manifest.e75cf47e4c4736ade9f137f7297f6fb8.js",
+    "service-worker.js": "/thaliak-xltn/service-worker.js",
+    "static/css/main.bda57e9c.chunk.css.map": "/thaliak-xltn/static/css/main.bda57e9c.chunk.css.map",
+    "static/media/App.css": "/thaliak-xltn/static/media/background.0524f5f0.png"
   }
 }
